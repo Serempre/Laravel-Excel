@@ -1,0 +1,29 @@
+Subject: [PATCH] Issue https://github.com/SpartnerNL/Laravel-Excel/pull/3876 fixed
+---
+Index: src/Files/RemoteTemporaryFile.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Files/RemoteTemporaryFile.php b/src/Files/RemoteTemporaryFile.php
+--- a/src/Files/RemoteTemporaryFile.php	(revision 9e5b7caaa51043085014d5f67fd6ec0a27ac0beb)
++++ b/src/Files/RemoteTemporaryFile.php	(revision 7c0df71be6ebdf2d6a35d1c2a7b7394a1a9e97a2)
+@@ -2,6 +2,8 @@
+ 
+ namespace Maatwebsite\Excel\Files;
+ 
++use Illuminate\Support\Arr;
++
+ class RemoteTemporaryFile extends TemporaryFile
+ {
+     /**
+@@ -94,7 +96,8 @@
+     public function sync(): TemporaryFile
+     {
+         if (!$this->localTemporaryFile->exists()) {
+-            touch($this->localTemporaryFile->getLocalPath());
++          $this->localTemporaryFile = resolve(TemporaryFileFactory::class)
++            ->makeLocal(Arr::last(explode('/', $this->filename)));
+         }
+ 
+         $this->disk()->copy(
